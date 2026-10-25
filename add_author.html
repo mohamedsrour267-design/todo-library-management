@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Author</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <main class="todo-container">
+        <h1>Add Author</h1>
+
+        {% for error in errors %}
+            <p class="error">{{ error }}</p>
+        {% endfor %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <label for="name">Author Name</label>
+            <input type="text" id="name" name="name"
+                   maxlength="100" required>
+
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country"
+                   maxlength="100">
+
+            <!-- Bonus: Author Photo -->
+            <label for="author_image">Author Photo</label>
+            <input type="file" id="author_image"
+                   name="author_image"
+                   accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+
+            <button type="submit">Add Author</button>
+        </form>
+
+        <p><a href="/library">Back to Library</a></p>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Add Task</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="{{ url_for('static', filename='validation.js') }}" defer></script>
+</head>
+
+<body>
+
+    <!-- Dark Mode Button -->
+    <button
+        type="button"
+        class="theme-toggle"
+        id="themeToggle"
+        onclick="toggleDarkMode()">
+        🌙 Dark Mode
+    </button>
+
+    <main class="auth-card">
+
+        <h1>Add New Task</h1>
+
+        {% for error in errors %}
+            <p class="error">{{ error }}</p>
+        {% endfor %}
+
+        <form method="POST" action="/add_todo" data-form="todo">
+
+            <label for="title">Task Title</label>
+
+            <input
+                id="title"
+                type="text"
+                name="title"
+                required
+            >
+
+            <button type="submit">Add Task</button>
+
+        </form>
+
+        <p class="switch-link">
+            <a href="/todos">Back to Tasks</a>
+        </p>
+
+    </main>
+
+    <!-- Dark Mode Script -->
+    <script>
+        function applyTheme(isDark) {
+            document.body.classList.toggle("dark-mode", isDark);
+
+            const button = document.getElementById("themeToggle");
+
+            if (button) {
+                button.textContent = isDark
+                    ? "☀️ Light Mode"
+                    : "🌙 Dark Mode";
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark =
+                !document.body.classList.contains("dark-mode");
+
+            localStorage.setItem(
+                "darkMode",
+                isDark ? "enabled" : "disabled"
+            );
+
+            applyTheme(isDark);
+        }
+
+        applyTheme(
+            localStorage.getItem("darkMode") === "enabled"
+        );
+    </script>
+
+</body>
+</html>

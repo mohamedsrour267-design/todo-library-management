@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Author | Library</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 40px auto;
+            padding: 28px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 28px #17203312;
+        }
+
+        label {
+            display: block;
+            margin: 16px 0 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccd4e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button, .button {
+            display: inline-block;
+            border: 0;
+            border-radius: 8px;
+            padding: 11px 16px;
+            background: #3157d5;
+            color: white;
+            font-size: 15px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .secondary {
+            background: #e9eef8;
+            color: #172033;
+        }
+
+        .errors {
+            padding: 12px 16px;
+            background: #fff0f0;
+            color: #a32020;
+            border-radius: 8px;
+        }
+
+        .current-image {
+            display: block;
+            max-width: 180px;
+            max-height: 180px;
+            object-fit: cover;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 22px;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <h1>Edit Author</h1>
+
+        <p>Update the author information below.</p>
+
+        {% if errors %}
+        <div class="errors">
+            {% for error in errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <label for="name">Author Name</label>
+            <input
+                id="name"
+                name="name"
+                maxlength="100"
+                required
+                value="{{ author[1] }}"
+            >
+
+            <label for="country">Country</label>
+            <input
+                id="country"
+                name="country"
+                value="{{ author[2] or '' }}"
+            >
+
+            <label for="author_image">Author Photo (optional)</label>
+
+            {% if author[3] %}
+            <img
+                class="current-image"
+                src="{{ url_for('static', filename=author[3]) }}"
+                alt="Current author photo"
+            >
+            {% endif %}
+
+            <input
+                id="author_image"
+                name="author_image"
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp"
+            >
+
+            <div class="actions">
+                <button type="submit">Save Changes</button>
+                <a class="button secondary" href="{{ url_for('library') }}">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+    </main>
+</body>
+</html>

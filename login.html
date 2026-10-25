@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="{{ url_for('static', filename='validation.js') }}" defer></script>
+</head>
+
+<body>
+
+    <!-- Dark Mode Button -->
+    <button
+        type="button"
+        class="theme-toggle"
+        id="themeToggle"
+        onclick="toggleDarkMode()">
+        🌙 Dark Mode
+    </button>
+
+    <main class="auth-card">
+
+        <h1>Welcome Back</h1>
+
+        <p class="subtitle">
+            Login to see your personal to-do list.
+        </p>
+
+        {% for error in errors %}
+            <p class="error">{{ error }}</p>
+        {% endfor %}
+
+        <form method="POST" action="/login" data-form="login">
+
+            <label for="email">Email</label>
+
+            <input
+                id="email"
+                type="email"
+                name="email"
+                required
+            >
+
+            <label for="password">Password</label>
+
+            <input
+                id="password"
+                type="password"
+                name="password"
+                required
+            >
+
+            <button type="submit">Login</button>
+
+        </form>
+
+        <p class="switch-link">
+            Don't have an account?
+            <a href="/register">Register</a>
+        </p>
+
+    </main>
+
+    <!-- Dark Mode Script -->
+    <script>
+        function applyTheme(isDark) {
+            document.body.classList.toggle("dark-mode", isDark);
+
+            const button = document.getElementById("themeToggle");
+
+            if (button) {
+                button.textContent = isDark
+                    ? "☀️ Light Mode"
+                    : "🌙 Dark Mode";
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark =
+                !document.body.classList.contains("dark-mode");
+
+            localStorage.setItem(
+                "darkMode",
+                isDark ? "enabled" : "disabled"
+            );
+
+            applyTheme(isDark);
+        }
+
+        applyTheme(
+            localStorage.getItem("darkMode") === "enabled"
+        );
+    </script>
+
+</body>
+</html>

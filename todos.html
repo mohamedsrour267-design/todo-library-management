@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My To-Do List</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="{{ url_for('static', filename='validation.js') }}" defer></script>
+</head>
+
+<body>
+
+    <!-- Dark Mode Button -->
+    <button
+        type="button"
+        class="theme-toggle"
+        id="themeToggle"
+        onclick="toggleDarkMode()">
+        🌙 Dark Mode
+    </button>
+
+    <main class="todo-container">
+
+        <header class="top-bar">
+
+            <div>
+                <h1>My To-Do List</h1>
+                <p class="subtitle">Hi, {{ name }}!</p>
+            </div>
+
+            <form method="POST" action="/logout">
+                <button class="secondary-button" type="submit">
+                    Log out
+                </button>
+            </form>
+
+        </header>
+
+        <a class="add-button" href="/add_todo">
+            + Add New Task
+        </a>
+
+        <!-- Library Button -->
+        <a class="add-button" href="/library">
+            📚 Go to Library
+        </a>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if tasks %}
+
+            <section class="task-list">
+
+                {% for task in tasks %}
+
+                    <article class="task-card">
+
+                        <div class="task-heading">
+
+                            {% if task[2] == 1 %}
+
+                                <span class="status done">Done</span>
+                                <h2 class="completed">{{ task[1] }}</h2>
+
+                            {% else %}
+
+                                <span class="status pending">Open</span>
+                                <h2>{{ task[1] }}</h2>
+
+                            {% endif %}
+
+                        </div>
+
+                        <p class="task-date">{{ task[3] }}</p>
+
+                        <!-- Edit Task -->
+                        <form method="POST"
+                              action="/edit_todo/{{ task[0] }}"
+                              data-form="todo">
+
+                            <label for="title-{{ task[0] }}">
+                                Edit title
+                            </label>
+
+                            <input
+                                id="title-{{ task[0] }}"
+                                type="text"
+                                name="title"
+                                value="{{ task[1] }}"
+                                maxlength="200"
+                                required
+                            >
+
+                            <button type="submit">Save</button>
+
+                        </form>
+
+                        <!-- Task Actions -->
+                        <div class="task-actions">
+
+                            <form method="POST"
+                                  action="/toggle_todo/{{ task[0] }}">
+
+                                <button class="secondary-button" type="submit">
+
+                                    {% if task[2] == 1 %}
+                                        Mark Not Done
+                                    {% else %}
+                                        Mark Done
+                                    {% endif %}
+
+                                </button>
+
+                            </form>
+
+                            <form method="POST"
+                                  action="/delete_todo/{{ task[0] }}"
+                                  onsubmit="return confirm('Are you sure?')">
+
+                                <button class="delete-button" type="submit">
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </section>
+
+        {% else %}
+
+            <section class="empty-state">
+                <h2>No tasks yet</h2>
+                <p>Add your first task to get started!</p>
+            </section>
+
+        {% endif %}
+
+    </main>
+
+    <!-- Dark Mode Script -->
+    <script>
+        function applyTheme(isDark) {
+            document.body.classList.toggle("dark-mode", isDark);
+
+            const button = document.getElementById("themeToggle");
+
+            if (button) {
+                button.textContent = isDark
+                    ? "☀️ Light Mode"
+                    : "🌙 Dark Mode";
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark =
+                !document.body.classList.contains("dark-mode");
+
+            localStorage.setItem(
+                "darkMode",
+                isDark ? "enabled" : "disabled"
+            );
+
+            applyTheme(isDark);
+        }
+
+        applyTheme(
+            localStorage.getItem("darkMode") === "enabled"
+        );
+    </script>
+
+</body>
+</html>

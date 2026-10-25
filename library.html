@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Library Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="library-page">
+
+    <div class="library-container">
+
+        <!-- Header -->
+        <header class="library-header">
+            <div class="library-brand">
+                <div class="library-logo">L</div>
+
+                <div>
+                    <h1>Libra<span>ry.</span></h1>
+                    <p>Your personal book collection</p>
+                </div>
+            </div>
+
+            <div class="library-user">
+                <div class="library-avatar">
+                    {{ name[0] | upper }}
+                </div>
+
+                <div>
+                    <strong>{{ name }}</strong>
+                    <small>Library Member</small>
+                </div>
+
+                <form action="/logout" method="POST">
+                    <button class="library-logout" type="submit">
+                        Log out
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <!-- Welcome Section -->
+        <section class="library-welcome">
+            <div>
+                <p class="library-eyebrow">YOUR LIBRARY</p>
+                <h2>Discover your next favorite book.</h2>
+                <p class="library-description">
+                    Manage your books and authors in one place.
+                </p>
+            </div>
+
+            <div class="library-welcome-icon">📚</div>
+        </section>
+
+        <!-- Statistics -->
+        <section class="library-stats">
+
+            <article class="library-stat-card">
+                <div class="stat-icon books-icon">📖</div>
+                <div>
+                    <p>Total Books</p>
+                    <h3>{{ books | length }}</h3>
+                    <small>Books in your collection</small>
+                </div>
+            </article>
+
+            <article class="library-stat-card">
+                <div class="stat-icon authors-icon">✍️</div>
+                <div>
+                    <p>Total Authors</p>
+                    <h3>{{ authors | length }}</h3>
+                    <small>Authors in your library</small>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- Actions -->
+        <section class="library-actions">
+            <div>
+                <h2>Library Collection</h2>
+                <p>Manage your collection and keep it organized.</p>
+            </div>
+
+            <div class="library-action-buttons">
+                <a class="library-btn library-btn-light"
+                   href="{{ url_for('add_author') }}">
+                    + Add Author
+                </a>
+
+                <a class="library-btn library-btn-primary"
+                   href="{{ url_for('add_book') }}">
+                    + Add Book
+                </a>
+            </div>
+        </section>
+
+        <!-- Books Table -->
+        <section class="library-panel">
+
+            <div class="library-panel-heading">
+                <div>
+                    <h2>📚 Books</h2>
+                    <p>All books currently in the library</p>
+                </div>
+
+                <span class="library-count">
+                    {{ books | length }} books
+                </span>
+            </div>
+
+            <div class="library-table-wrapper">
+                <table class="library-table">
+
+                    <thead>
+                        <tr>
+                            <th>BOOK ID</th>
+                            <th>COVER</th>
+                            <th>TITLE</th>
+                            <th>PRICE</th>
+                            <th>AUTHOR ID</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+
+                            <td>
+                                <span class="library-id">
+                                    #{{ book[0] }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% if book[4] %}
+                                    <img
+                                        src="{{ url_for('static', filename=book[4]) }}"
+                                        alt="Cover of {{ book[1] }}"
+                                        width="65"
+                                        height="85"
+                                        style="object-fit: cover; border-radius: 8px;"
+                                    >
+                                {% else %}
+                                    <div class="book-cover-placeholder">
+                                        📕
+                                    </div>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="library-book-title">
+                                    <strong>{{ book[1] }}</strong>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="library-price">
+                                    {{ "%.2f"|format(book[2] or 0) }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="library-author-id">
+                                    Author #{{ book[3] }}
+                                </span>
+                            </td>
+
+                            <!-- Book Actions -->
+                            <td>
+                                <div class="library-row-actions">
+
+                                    <a
+                                        class="library-edit-btn"
+                                        href="{{ url_for('edit_book', book_id=book[0]) }}"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <form
+                                        action="{{ url_for('delete_book', book_id=book[0]) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this book?');"
+                                    >
+                                        <button
+                                            class="library-delete-btn"
+                                            type="submit"
+                                        >
+                                            Delete
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="library-empty">
+                                <div>📚</div>
+                                <strong>No books yet</strong>
+                                <p>Add your first book to get started.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </section>
+
+        <!-- Authors Table -->
+        <section class="library-panel">
+
+            <div class="library-panel-heading">
+                <div>
+                    <h2>✍️ Authors</h2>
+                    <p>The people behind your favorite books</p>
+                </div>
+
+                <span class="library-count">
+                    {{ authors | length }} authors
+                </span>
+            </div>
+
+            <div class="library-table-wrapper">
+                <table class="library-table">
+
+                    <thead>
+                        <tr>
+                            <th>AUTHOR ID</th>
+                            <th>PHOTO</th>
+                            <th>NAME</th>
+                            <th>COUNTRY</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for author in authors %}
+                        <tr>
+
+                            <td>
+                                <span class="library-id">
+                                    #{{ author[0] }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% if author[3] %}
+                                    <img
+                                        src="{{ url_for('static', filename=author[3]) }}"
+                                        alt="Photo of {{ author[1] }}"
+                                        width="65"
+                                        height="65"
+                                        style="object-fit: cover; border-radius: 50%;"
+                                    >
+                                {% else %}
+                                    <div class="author-avatar">
+                                        {{ author[1][0] | upper }}
+                                    </div>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="library-author-name">
+                                    <strong>{{ author[1] }}</strong>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="library-country">
+                                    {{ author[2] or "Not specified" }}
+                                </span>
+                            </td>
+
+                            <!-- Author Actions -->
+                            <td>
+                                <div class="library-row-actions">
+
+                                    <a
+                                        class="library-edit-btn"
+                                        href="{{ url_for('edit_author', author_id=author[0]) }}"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <form
+                                        action="{{ url_for('delete_author', author_id=author[0]) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this author and their books?');"
+                                    >
+                                        <button
+                                            class="library-delete-btn"
+                                            type="submit"
+                                        >
+                                            Delete
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="library-empty">
+                                <div>✍️</div>
+                                <strong>No authors yet</strong>
+                                <p>Add an author to get started.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </section>
+
+        <!-- Footer -->
+        <footer class="library-footer">
+            <a href="{{ url_for('todos') }}">← Back to To-Do List</a>
+            <span>Library Management System</span>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>
